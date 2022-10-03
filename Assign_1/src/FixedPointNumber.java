@@ -1,8 +1,8 @@
 // author of program:  Ramish
 // Description:  This program is a fixed point number that can be added, subtracted, multiplied, divided, and converted to a different q value
 public class FixedPointNumber {
-    private int intVal;
-    private int qVal = 12;
+    final private int intVal;
+    final private int qVal ;
 
     // no method in class can call this constructor
     public FixedPointNumber(int intVal, int qVal) {
@@ -18,7 +18,7 @@ public class FixedPointNumber {
 
     // to be called to string method
     public double toDouble() {
-        return (double) (this.intVal / Math.pow(2, this.qVal));
+        return  (this.intVal / Math.pow(2, this.qVal));
     }
 
     //convert from one fixed point to another
@@ -32,7 +32,7 @@ public class FixedPointNumber {
         return number;
     }
 
-    // fixedpoint to string
+    // fixed point to string
     public String toString() {
         return String.format("%d,%d: %.6f", this.intVal, this.qVal, this.toDouble());
     }
