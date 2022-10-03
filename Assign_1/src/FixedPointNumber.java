@@ -43,7 +43,7 @@ public class FixedPointNumber {
     }
 
     // add two fixed point numbers
-    public FixedPointNumber plus(FixedPointNumber x, int q) {
-        return new FixedPointNumber(this.toQval(q).intVal + x.toQval(q).intVal, q);
+    public FixedPointNumber add(FixedPointNumber x, int q) {
+        return new FixedPointNumber(this.toDouble() + x.toDouble(), q);
     }
 }
