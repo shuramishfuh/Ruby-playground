@@ -15,5 +15,10 @@ public class Main {
         //</editor-fold>
 
 
+        //<editor-fold desc="Test for FixedPointList Class">
+        FixedPointList list = new FixedPointList();
+        list.print();
+
+
     }
 }
