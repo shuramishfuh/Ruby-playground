@@ -74,7 +74,7 @@ public class FixedPointList {
     public FixedPointNumber sum(int q) {
         FixedPointNumber sum = new FixedPointNumber(0, q);
         for (FixedPointNumber number : this.list) {
-            sum = sum.add(number, this.listQVal);
+            sum = sum.plus(number, this.listQVal);
         }
         return sum;
     }
