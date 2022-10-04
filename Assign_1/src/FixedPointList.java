@@ -26,11 +26,18 @@ public class FixedPointList {
     // add to list
     public void add(FixedPointNumber x) {
         this.list.add(x);
+        System.out.println(x + " was added to the list");
     }
 
     // remove first instance of x
-    public void remove(FixedPointNumber x) {
-        this.list.remove(x);
+    public boolean delete(FixedPointNumber x) {
+        for (int i = 0; i < this.list.size(); i++) {
+            if (this.list.get(i).equals(x)) {
+                this.list.remove(i);
+                return true;
+            }
+        }
+        return false;
     }
 
     // print all fixed point numbers in list
@@ -64,12 +71,12 @@ public class FixedPointList {
     }
 
     // sum all fixed point numbers in list and print result
-    public void sum() {
-        FixedPointNumber sum = new FixedPointNumber(0, listQVal);
+    public FixedPointNumber sum(int q) {
+        FixedPointNumber sum = new FixedPointNumber(0, q);
         for (FixedPointNumber number : this.list) {
             sum = sum.add(number, this.listQVal);
         }
-        System.out.println("the sum is : " + sum);
+        return sum;
     }
 
     // end program
@@ -87,12 +94,21 @@ public class FixedPointList {
             if (operator.equalsIgnoreCase("X")) {
                 end();
                 break;
-            } else if (operator.equalsIgnoreCase("A")) add(new FixedPointNumber(in.nextDouble(), getListQVal()));
-            else if (operator.equalsIgnoreCase("P")) print();
+            } else if (operator.equalsIgnoreCase("A")) {
+                add(new FixedPointNumber(in.nextDouble(), getListQVal()));
+            } else if (operator.equalsIgnoreCase("P")) print();
             else if (operator.equalsIgnoreCase("Q")) changeListQ(in.nextInt());
-            else if (operator.equalsIgnoreCase("D")) remove(new FixedPointNumber(in.nextDouble(), in.nextInt()));
-            else if (operator.equalsIgnoreCase("S")) sum();
-            else System.out.println("Invalid command");
+            else if (operator.equalsIgnoreCase("D")) {
+                FixedPointNumber num = new FixedPointNumber(in.nextDouble(), listQVal);
+                if (delete(num)) {
+                    System.out.println(num + " was removed from the list");
+                } else {
+                    System.out.println(num + " was not found in the list");
+                }
+
+            } else if (operator.equalsIgnoreCase("S")) {
+                System.out.println("the sum is : " + sum(listQVal));
+            } else System.out.println("Invalid command");
         }
 
     }

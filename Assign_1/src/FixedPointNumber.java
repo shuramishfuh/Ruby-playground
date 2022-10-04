@@ -5,8 +5,8 @@ public class FixedPointNumber {
     final private int qVal ;
 
     // no method in class can call this constructor
-    public FixedPointNumber(int intVal, int qVal) {
-        this.intVal = intVal;
+    private FixedPointNumber(int intVal, int qVal) {
+        this.intVal = (int) (intVal * Math.pow(2, qVal));;
         this.qVal = qVal;
     }
 
