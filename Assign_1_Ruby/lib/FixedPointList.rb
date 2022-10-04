@@ -1,6 +1,6 @@
 require_relative 'FixedPointNumber'
 class FixedPointList
-  @fixed_point_list = Array.new(10)
+  @fixed_point_list = Array.new
   @list_val = 12
 
   def set_q_val(q_val)
