@@ -42,7 +42,7 @@ class FixedPointNumber
 
   #add two fixed point numbers
   def add(other,q)
-    return FixedPointNumber.new(@int_val + other.int_val, q)
+    return FixedPointNumber.new(self.to_double+ other.to_double, q)
   end
 
 end
