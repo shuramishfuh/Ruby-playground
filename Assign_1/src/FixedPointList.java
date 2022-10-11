@@ -94,8 +94,7 @@ public class FixedPointList {
             if (operator.equalsIgnoreCase("X")) {
                 end();
                 break;
-            }
-            else if (operator.equalsIgnoreCase("A")) {
+            } else if (operator.equalsIgnoreCase("A")) {
                 add(new FixedPointNumber(in.nextDouble(), getListQVal()));
             } else if (operator.equalsIgnoreCase("P")) print();
             else if (operator.equalsIgnoreCase("Q")) changeListQ(in.nextInt());
