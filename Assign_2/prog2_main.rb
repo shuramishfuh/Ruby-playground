@@ -1,5 +1,5 @@
-# Student Name:
-# Section:
+# author : Ramish
+# section 2
 # CS 3520 Fall 2022
 #
 # This is the main class for program2, which was provided by the instructor.
@@ -18,9 +18,9 @@ t = lexer.next_token
 
 #define EOF as a constant in class Token that is different from all valid token types
 
-while Token::EOF != t.type do
-  puts t
-  t = lexer.next_token
-end
+# while Token::EOF != t.type do
+#   puts t
+#   t = lexer.next_token
+# end
 
 puts "Lexical analysis is finished!"

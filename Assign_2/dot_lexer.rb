@@ -3,7 +3,7 @@
 # CS 3520 Fall 2022
 
 # this class defines the token and their creation
-require "/home/ramsi/RubymineProjects/ProgLang/Assign_2/token.rb"
+require_relative "token.rb"
 
 class DotLexer
 
@@ -36,6 +36,7 @@ class DotLexer
     elsif word.downcase == "{"
       puts Token.new("{", LCURLY)
 
+      # test for equal sign  as a single token or as part of a string
     elsif word.downcase == "="
       if word.length > 1
         puts Token.new(word, EQUALS)
@@ -47,6 +48,7 @@ class DotLexer
     elsif word.downcase == "}"
       puts Token.new(word, RCURLY)
 
+      # test for RBRACK   as a single token or as part of a string
     elsif word[0] == "["
       if word.length > 1
         puts Token.new("[", LBRACK)
@@ -54,31 +56,41 @@ class DotLexer
       else
         puts Token.new("[", LBRACK)
       end
-    elsif word[word.length - 1] == ";"
-      puts Token.new(";", SEMI)
-      core(word.chop)
-      #
-    elsif word[word.length - 1] == "]" || word == "]"
-      puts Token.new("]", RBRACK)
-      core(word.chop)
 
+      # test for  RBRACK  as a single token or as part of a string
+    elsif word[0] == "]"
+      if word.length > 1
+        core(word[1..-1])
+        puts Token.new("]", RBRACK)
+      else
+        puts Token.new("]", RBRACK)
+      end
+
+      # test for semicolon  aat end of a string
+    elsif word[word.length - 1] == ";"
+      core(word.chop)
+      puts Token.new(";", SEMI)
+
+      # test for String/ illegal  as a single token or as part of a string
     elsif word[0] == "\""
       if word[word.length - 1] == "\""
         puts Token.new(word, STRING)
+
+        # string with special chars
       else
         word = word[1..-1].chars
         index_of_string = word.find_index("\"")
         sub_string = "\"" + word[0..index_of_string].join('')
         puts Token.new(sub_string, STRING)
         word = word.join[index_of_string + 1..-1]
-        puts " next word is "
-        puts word
         core(word)
       end
 
+      # arrow
     elsif word.downcase == "->"
       puts Token.new(word, ARROW)
 
+      # int case
     elsif word == word.to_i.to_s
       puts Token.new(word, INT)
 
@@ -89,26 +101,18 @@ class DotLexer
       else
         odd_char_position = word.index(/[^[:alnum:]]/)
         puts Token.new(word[0..odd_char_position - 1], ID)
-        puts word[odd_char_position + 1..-1]
+        puts "illegal char " + word[odd_char_position]
         core(word[odd_char_position + 1..-1])
       end
-
     end
   end
 
   def next_token
-
     # read file
     File.readlines("/home/ramsi/RubymineProjects/ProgLang/Assign_2/prog2.in").each do |line|
       line.split(' ').each do |str|
         core(str)
       end
-
     end
   end
 end
-
-n = DotLexer.new
-n.next_token
-
-
