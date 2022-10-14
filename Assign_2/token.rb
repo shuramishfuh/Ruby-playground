@@ -13,3 +13,10 @@ class Token
     return "[" + @name.to_s + ":" + @type.to_s + "]"
   end
 end
+
+# a = "12\"34".chars
+# index_of_string = a.find_index("\"")
+# b= a[0..index_of_string].join('').chop
+# puts a.join[index_of_string+1..-1]
+# puts b
+# puts "Hel#7lo".index( /[^[:alnum:]]/ )

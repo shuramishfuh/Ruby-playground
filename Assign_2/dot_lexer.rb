@@ -23,31 +23,85 @@ class DotLexer
   WS = 14
   EOF = -1
 
-  def initialize
-    @fixed_point_list = []
+  def core(word)
+
+    if word.downcase == "digraph"
+      puts Token.new(word, DIGRAPH)
+
+    elsif word.strip.empty?
+
+    elsif word.downcase == "subgraph"
+      puts Token.new(word, SUBGRAPH)
+
+    elsif word.downcase == "{"
+      puts Token.new("{", LCURLY)
+
+    elsif word.downcase == "="
+      if word.length > 1
+        puts Token.new(word, EQUALS)
+        core(word[1..-1])
+      else
+        puts Token.new(word, EQUALS)
+      end
+
+    elsif word.downcase == "}"
+      puts Token.new(word, RCURLY)
+
+    elsif word[0] == "["
+      if word.length > 1
+        puts Token.new("[", LBRACK)
+        core(word[1..-1])
+      else
+        puts Token.new("[", LBRACK)
+      end
+    elsif word[word.length - 1] == ";"
+      puts Token.new(";", SEMI)
+      core(word.chop)
+      #
+    elsif word[word.length - 1] == "]" || word == "]"
+      puts Token.new("]", RBRACK)
+      core(word.chop)
+
+    elsif word[0] == "\""
+      if word[word.length - 1] == "\""
+        puts Token.new(word, STRING)
+      else
+        word = word[1..-1].chars
+        index_of_string = word.find_index("\"")
+        sub_string = "\"" + word[0..index_of_string].join('')
+        puts Token.new(sub_string, STRING)
+        word = word.join[index_of_string + 1..-1]
+        puts " next word is "
+        puts word
+        core(word)
+      end
+
+    elsif word.downcase == "->"
+      puts Token.new(word, ARROW)
+
+    elsif word == word.to_i.to_s
+      puts Token.new(word, INT)
+
+      # pure string
+    elsif word[0].match(/^[a-zA-Z]+$/)
+      if word.match(/[a-zA-Z0-9]+$/) && word.index(/[^[:alnum:]]/) == nil
+        puts Token.new(word, ID)
+      else
+        odd_char_position = word.index(/[^[:alnum:]]/)
+        puts Token.new(word[0..odd_char_position - 1], ID)
+        puts word[odd_char_position + 1..-1]
+        core(word[odd_char_position + 1..-1])
+      end
+
+    end
   end
 
-  @list_of_tokens = []
-
-  # array of recognized characters
   def next_token
 
     # read file
     File.readlines("/home/ramsi/RubymineProjects/ProgLang/Assign_2/prog2.in").each do |line|
-      line.split(' ').each do |word|
-        if word.downcase == "digraph"
-          puts Token.new(word, DIGRAPH)
-
-        elsif word.downcase == "subgraph"
-          puts Token.new(word, SUBGRAPH)
-
-        elsif word.downcase == "{"
-          puts Token.new(word, LCURLY)
-
-
-
-
-        end
+      line.split(' ').each do |str|
+        core(str)
       end
 
     end
