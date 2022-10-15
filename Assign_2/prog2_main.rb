@@ -6,7 +6,7 @@
 # The only modification is the commented out line used for input files when debugging.
 #
 
-require_relative "dot_lexer"
+require_relative "dot_lexer.rb"
 
 # Uncomment this line for debugging. Must place Prog2.in with desired input
 # in the same folder as your ruby files.
