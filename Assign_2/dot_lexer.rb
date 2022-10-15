@@ -113,7 +113,7 @@ class DotLexer
 
   def next_token
     # read file
-    File.readlines(__dir__+"prog2.in").each do |line|
+    File.readlines("prog2.in").each do |line|
       line.split(' ').each do |str|
         core(str)
       end
