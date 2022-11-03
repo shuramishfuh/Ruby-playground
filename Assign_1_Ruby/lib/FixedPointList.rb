@@ -25,7 +25,8 @@ class FixedPointList
   #remove first instance of a fixed point number in the list
   def remove_fixed_point(fixed_point)
     (0..@fixed_point_list.length - 1).each { |i|
-      if @fixed_point_list[i].equals(fixed_point)
+      #@a =@fixed_point_list[i].to_Q_val(@list_val)
+      if @fixed_point_list[i].to_Q_val(@list_val).equals(fixed_point)
         @fixed_point_list.delete_at(i)
         puts "#{fixed_point} was removed from the list"
         return
@@ -74,6 +75,7 @@ class FixedPointList
     while true
       puts "Enter command: "
       command, fixed_point = gets.chomp.chomp.split(' ')
+      puts(fixed_point.to_f)
       if command.upcase == "X"
         end_program
       elsif command.upcase == "A" then

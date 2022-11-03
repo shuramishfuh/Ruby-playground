@@ -16,15 +16,17 @@ class FixedPointNumber
 
   # convert to double
   def to_double
-    return @int_val.to_f / (2 ** @q_val)
+    return (@int_val.to_f / (2 ** @q_val)).round(2)
   end
 
   #convert from one fixed point to another
   def to_Q_val(q_val)
-    if (@int_val > q_val)
+    if (@q_val > q_val)
       return FixedPointNumber.new(@int_val >> (@q_val - q_val), q_val)
     elsif (@q_val < q_val) then
       return FixedPointNumber.new(@int_val << (q_val - @q_val), q_val)
+    else
+      return FixedPointNumber.new(@int_val, @q_val)
     end
   end
   #
@@ -36,7 +38,7 @@ class FixedPointNumber
   # #two fixed point numbers are equal if they have the same integer value and the same q value
   def equals(other)
     if (other.is_a?(FixedPointNumber)) then
-      return @int_val == other.int_val && @q_val == other.q_val
+      return @int_val == other.int_val
     end
   end
 
