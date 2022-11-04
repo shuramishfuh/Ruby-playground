@@ -25,8 +25,7 @@ class FixedPointList
   #remove first instance of a fixed point number in the list
   def remove_fixed_point(fixed_point)
     (0..@fixed_point_list.length - 1).each { |i|
-      #@a =@fixed_point_list[i].to_Q_val(@list_val)
-      if @fixed_point_list[i].to_Q_val(@list_val).equals(fixed_point)
+      if @fixed_point_list[i].to_Q_val(@list_val).to_double() == (fixed_point.to_double())
         @fixed_point_list.delete_at(i)
         puts "#{fixed_point} was removed from the list"
         return
