@@ -87,6 +87,11 @@ class DotLexer
     @array_of_tokens.push(Token.new(";", SEMI))
   end
 
+  def comma(word)
+    core(word.chop)
+    @array_of_tokens.push(Token.new(",", COMMA))
+  end
+
   def core(word)
 
     if word == "="
@@ -104,6 +109,8 @@ class DotLexer
       lbracket(word)
     elsif word[0] == "]"
       rbracket(word)
+    elsif word[0] == ","
+      comma(word)
     elsif word[word.length - 1] == ";"
       semi(word)
     elsif word[0] == "\""
@@ -121,12 +128,22 @@ class DotLexer
     # read file
     File.readlines("prog3_1.in").each do |line|
       line.split(' ').each do |str|
-        if str.include?("=")
+        if str.include?("=") # check for equals
           if str.length > 1
             str = str.split("=")
             @temp = str[1] # add equals back to string
             str[1] = "="
             str.push(@temp)
+            str.each do |word|
+              core(word)
+            end
+          else
+            core(str)
+          end
+        elsif str.include?(",") # check for comma
+          if str.length > 1
+            str = str.split(",")
+            str.push(",")
             str.each do |word|
               core(word)
             end
