@@ -3,7 +3,7 @@
 # CS 3520 Fall 2022
 
 # this class defines the token and their creation
-require_relative  "token.rb"
+require_relative "token.rb"
 
 class DotLexer
 
@@ -28,6 +28,7 @@ class DotLexer
   def initialize
     @array_of_tokens = []
   end
+
   def pure_string(word)
     if word.match(/[a-zA-Z0-9]+$/) && word.index(/[^[:alnum:]]/) == nil
       @array_of_tokens.push(Token.new(word, ID))
@@ -88,15 +89,15 @@ class DotLexer
 
   def core(word)
 
-    if word.downcase == "digraph"
+    if word == "="
+      equals(word)
+    elsif word.downcase == "digraph"
       @array_of_tokens.push(Token.new(word, DIGRAPH))
     elsif word.strip.empty?
     elsif word.downcase == "subgraph"
       @array_of_tokens.push(Token.new(word, SUBGRAPH))
     elsif word.downcase == "{"
       @array_of_tokens.push(Token.new(word, LCURLY))
-    elsif word.downcase == "="
-      equals(word)
     elsif word.downcase == "}"
       @array_of_tokens.push(Token.new(word, RCURLY))
     elsif word[0] == "["
@@ -120,9 +121,23 @@ class DotLexer
     # read file
     File.readlines("prog3_1.in").each do |line|
       line.split(' ').each do |str|
-        core(str)
+        if str.include?("=")
+          if str.length > 1
+            str = str.split("=")
+            @temp = str[1] # add equals back to string
+            str[1] = "="
+            str.push(@temp)
+            str.each do |word|
+              core(word)
+            end
+          else
+            core(str)
+          end
+        else
+          core(str)
+        end
       end
     end
-    return  @array_of_tokens
+    return @array_of_tokens
   end
 end
