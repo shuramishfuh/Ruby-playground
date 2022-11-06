@@ -29,7 +29,7 @@ class DotLexer
     @array_of_tokens = []
   end
   def pure_string(word)
-    if word.must_match(/[a-zA-Z0-9]+$/) && word.index(/[^[:alnum:]]/) == nil
+    if word.match(/[a-zA-Z0-9]+$/) && word.index(/[^[:alnum:]]/) == nil
       @array_of_tokens.push(Token.new(word, ID))
     else
       odd_char_position = word.index(/[^[:alnum:]]/)
@@ -111,7 +111,7 @@ class DotLexer
       @array_of_tokens.push(Token.new(word, ARROW))
     elsif word == word.to_i.to_s
       @array_of_tokens.push(Token.new(word, INT))
-    elsif word[0].must_match(/^[a-zA-Z]+$/)
+    elsif word[0].match(/^[a-zA-Z]+$/)
       pure_string(word)
     end
   end
