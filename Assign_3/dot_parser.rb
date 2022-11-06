@@ -24,20 +24,9 @@ class DotParser
   def if_match(token_type)
     if @token.type == @constant[token_type.to_s.upcase]
       get_next_token
-      return true
+      true
     else
-      return false
-    end
-  end
-
-
-  def edge_stmt
-    if if_match(:ID) or if_match(:SUBGRAPH)
-      edge
-      edgeRHS
-      must_match(:LBRACK)
-      attr_list
-      must_match(:RBRACK)
+      false
     end
   end
 
@@ -55,56 +44,88 @@ class DotParser
     if match_id
       must_match(:LCURLY)
       stmt_list
-      must_match(:RCURLY)
-    else
-      raise "Syntax error at line"
-    end
-  end
-
-  def stmt_list
-    stmt
-    stmt_list_prime
-  end
-
-
-  #TODO: check for errors
-  def attr_list
-    if match_id
-      must_match(:EQUALS)
-      match_id
-      if @token.type == @constant["ID"]
-        match_attr_list
+      if @token.type == @constant["RCURLY"]
+        must_match(:RCURLY)
+      else
+        stmt_list
       end
     else
       raise "Syntax error at line"
     end
   end
 
+  def stmt
+    if if_match(:SUBGRAPH)
+      subgraph
+    elsif match_id
+      if if_match(:ARROW)
+        edge_stmt
+      else
+        must_match(:EQUALS)
+        must_match(:id)
+      end
+    else
+      edge_stmt
+    end
+  end
+
+  def stmt_list
+    stmt
+    if @token.type == @constant["SEMI"]
+      must_match(:SEMI)
+    end
+  end
+
+  #TODO: check for errors will have invalid syntax
+  def edge_stmt
+    if match_id
+      if if_match(:LBRACK)
+        attr_list
+        must_match(:RBRACK)
+      else
+        edge
+        edgeRHS
+      end
+    elsif if_match(:SUBGRAPH)
+      subgraph
+    else
+      raise "Syntax error at line"
+    end
+  end
+
+  #TODO: check for errors
+  def attr_list
+    must_match_id
+    must_match(:EQUALS)
+    must_match_id
+    if if_match(:COMMA)
+      attr_list
+    end
+  end
+
   #TODO: ask  for clarification about this method
   def edgeRHS
-    if if_match(:SUBGRAPH) or match_id
-      must_match(:LCURLY)
-      match_edge
-      match_edgeRHS
+    if match_id
+      edge
+      if !match_id
+        raise "Syntax error at line"
+      end
+    else
+      must_match(:SUBGRAPH)
+      if !match_id
+        raise "Syntax error at line"
+      end
     end
 
   end
 
+  #TODO: check __  not sure what this is
   def edge
     if @token.type == @constant["ARROW"] or @token.name == @constant["__"]
       get_next_token
-      return true
+      true
     else
-      return false
-    end
-  end
-
-  def match_id
-    if @token.type == @constant["ID"] or @token.type == @constant["string"] or @token.type == @constant["INT"]
-      get_next_token
-      return true
-    else
-      return false
+      false
     end
   end
 
@@ -120,25 +141,20 @@ class DotParser
 
   end
 
-  def stmt_list_prime
-    if @token.type == :ID
-      stmt
-      stmt_list_prime
+  def match_id
+    if @token.type == @constant["ID"] or @token.type == @constant["STRING"] or @token.type == @constant["INT"]
+      get_next_token
+      true
+    else
+      false
     end
   end
 
-  def stmt
-    if @token.type == :@constant["ID"]
-      must_match(:id)
-      must_match(:EQUALS)
-      must_match(:id)
-      must_match(:semicolon)
-    elsif @token.type == :edgeop
-      must_match(:edgeop)
-      must_match(:id)
-      must_match(:semicolon)
+  def must_match_id
+    if @token.type == @constant["ID"] or @token.type == @constant["STRING"] or @token.type == @constant["INT"]
+      get_next_token
     else
-      raise "Syntax error at line #{@lexer.line}, column #{@lexer.column}"
+      raise "Syntax error at line"
     end
   end
 end
