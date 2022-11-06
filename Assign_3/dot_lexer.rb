@@ -23,27 +23,32 @@ class DotLexer
   WS = 14
   EOF = -1
 
+  @array_of_tokens = []
+
+  def initialize
+    @array_of_tokens = []
+  end
   def pure_string(word)
-    if word.match(/[a-zA-Z0-9]+$/) && word.index(/[^[:alnum:]]/) == nil
-      puts Token.new(word, ID)
+    if word.must_match(/[a-zA-Z0-9]+$/) && word.index(/[^[:alnum:]]/) == nil
+      @array_of_tokens.push(Token.new(word, ID))
     else
       odd_char_position = word.index(/[^[:alnum:]]/)
-      puts Token.new(word[0..odd_char_position - 1], ID)
-      puts "illegal char " + word[odd_char_position]
+      @array_of_tokens.push(Token.new(word[0..odd_char_position - 1], ID))
+      # puts "illegal char " + word[odd_char_position]
       core(word[odd_char_position + 1..-1])
     end
   end
 
   def illegal_or_string(word)
     if word[word.length - 1] == "\""
-      puts Token.new(word, STRING)
+      @array_of_tokens.push(Token.new(word, STRING))
 
       # string with special chars
     else
       word = word[1..-1].chars
       index_of_string = word.find_index("\"")
       sub_string = "\"" + word[0..index_of_string].join('')
-      puts Token.new(sub_string, STRING)
+      @array_of_tokens.push(Token.new(sub_string, STRING)) # check if string is valid
       word = word.join[index_of_string + 1..-1]
       core(word)
     end
@@ -52,48 +57,48 @@ class DotLexer
   def rbracket(word)
     if word.length > 1
       core(word[1..-1])
-      puts Token.new("]", RBRACK)
+      @array_of_tokens.push(Token.new("]", RBRACK))
     else
-      puts Token.new("]", RBRACK)
+      @array_of_tokens.push(Token.new("]", RBRACK))
     end
   end
 
   def lbracket(word)
     if word.length > 1
-      puts Token.new("[", LBRACK)
+      @array_of_tokens.push(Token.new("[", LBRACK))
       core(word[1..-1])
     else
-      puts Token.new("[", LBRACK)
+      @array_of_tokens.push(Token.new("[", LBRACK))
     end
   end
 
   def equals(word)
     if word.length > 1
-      puts Token.new(word, EQUALS)
+      @array_of_tokens.push(Token.new(word[0], EQUALS)) # push the first char check here for error
       core(word[1..-1])
     else
-      puts Token.new(word, EQUALS)
+      @array_of_tokens.push(Token.new(word, EQUALS))
     end
   end
 
   def semi(word)
     core(word.chop)
-    puts Token.new(";", SEMI)
+    @array_of_tokens.push(Token.new(";", SEMI))
   end
 
   def core(word)
 
     if word.downcase == "digraph"
-      puts Token.new(word, DIGRAPH)
+      @array_of_tokens.push(Token.new(word, DIGRAPH))
     elsif word.strip.empty?
     elsif word.downcase == "subgraph"
-      puts Token.new(word, SUBGRAPH)
+      @array_of_tokens.push(Token.new(word, SUBGRAPH))
     elsif word.downcase == "{"
-      puts Token.new("{", LCURLY)
+      @array_of_tokens.push(Token.new(word, LCURLY))
     elsif word.downcase == "="
       equals(word)
     elsif word.downcase == "}"
-      puts Token.new(word, RCURLY)
+      @array_of_tokens.push(Token.new(word, RCURLY))
     elsif word[0] == "["
       lbracket(word)
     elsif word[0] == "]"
@@ -103,20 +108,21 @@ class DotLexer
     elsif word[0] == "\""
       illegal_or_string(word)
     elsif word.downcase == "->"
-      puts Token.new(word, ARROW)
+      @array_of_tokens.push(Token.new(word, ARROW))
     elsif word == word.to_i.to_s
-      puts Token.new(word, INT)
-    elsif word[0].match(/^[a-zA-Z]+$/)
+      @array_of_tokens.push(Token.new(word, INT))
+    elsif word[0].must_match(/^[a-zA-Z]+$/)
       pure_string(word)
     end
   end
 
   def next_token
     # read file
-    File.readlines("prog2.in").each do |line|
+    File.readlines("prog3_1.in").each do |line|
       line.split(' ').each do |str|
         core(str)
       end
     end
+    return  @array_of_tokens
   end
 end
