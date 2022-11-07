@@ -130,6 +130,7 @@ class DotParser
   end
 
   def subgraph
+    puts "Start recognizing a subgraph"
     must_match(:SUBGRAPH)
     if match_id
       must_match(:LCURLY)
