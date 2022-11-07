@@ -93,12 +93,15 @@ class DotParser
     end
   end
 
-  #TODO: check for errors
+  #: check for errors
   def attr_list
-    must_match_id
-    must_match(:EQUALS)
-    must_match_id
-    if if_match(:COMMA)
+    match_id
+    if is_match(:EQUALS)
+      must_match(:EQUALS)
+      match_id
+    end
+    if is_match(:COMMA)
+      must_match(:COMMA)
       attr_list
     end
   end
