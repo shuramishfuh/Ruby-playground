@@ -103,20 +103,11 @@ class DotParser
     end
   end
 
-  #TODO: ask  for clarification about this method
   def edgeRHS
-    if match_id
-      edge
-      if !match_id
-        raise "Syntax error at line"
-      end
-    else
-      must_match(:SUBGRAPH)
-      if !match_id
-        raise "Syntax error at line"
-      end
+    match_id_or_subgraph
+    if edge(false)
+      match_id_or_subgraph
     end
-
   end
 
   # @param [Boolean] pass false if not want to throw error
