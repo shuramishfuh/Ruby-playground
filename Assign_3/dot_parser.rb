@@ -69,28 +69,18 @@ class DotParser
     end
   end
 
-  def stmt_list
-    stmt
-    if @token.type == @constant["SEMI"]
-      must_match(:SEMI)
-    end
-  end
-
-  #TODO: check for errors will have invalid syntax
   def edge_stmt
-    if match_id
-      if if_match(:LBRACK)
-        attr_list
-        must_match(:RBRACK)
-      else
-        edge
-        edgeRHS
-      end
-    elsif if_match(:SUBGRAPH)
-      subgraph
-    else
-      raise "Syntax error at line"
+    puts "Start recognizing an edge statement"
+    match_id_or_subgraph
+    edge
+    edgeRHS
+    if is_match(:LBRAK)
+      must_match(:LBRAK)
+      attr_list
+      must_match(:RBRAK)
     end
+
+    puts "Finish recognizing an edge statement"
   end
 
   #: check for errors
