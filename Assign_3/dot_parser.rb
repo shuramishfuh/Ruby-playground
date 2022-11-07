@@ -57,6 +57,16 @@ class DotParser
     end
   end
 
+  #TODO: check for errors
+  # #TODO: check how to test for a stmt
+  def stmt_list
+    if match_id_or_subgraph(false)
+      stmt
+    elsif is_match(:SEMI)
+      must_match(:SEMI)
+    end
+  end
+
   def stmt
     if is_id
       must_match(:ID)
