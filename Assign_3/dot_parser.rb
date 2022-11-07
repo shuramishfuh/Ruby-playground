@@ -150,7 +150,7 @@ class DotParser
     end
   end
 
-  def must_match_id
+  def is_id
     if @token.type == @constant["ID"] or @token.type == @constant["STRING"] or @token.type == @constant["INT"]
       get_next_token
     else
