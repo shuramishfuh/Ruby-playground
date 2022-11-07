@@ -152,10 +152,9 @@ class DotParser
 
   def is_id
     if @token.type == @constant["ID"] or @token.type == @constant["STRING"] or @token.type == @constant["INT"]
-      get_next_token
-    else
-      raise "Syntax error at line"
+      true
     end
+    false
   end
 end
 
