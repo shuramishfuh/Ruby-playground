@@ -119,13 +119,16 @@ class DotParser
 
   end
 
-  #TODO: check __  not sure what this is
-  def edge
-    if @token.type == @constant["ARROW"] or @token.name == @constant["__"]
+  # @param [Boolean] pass false if not want to throw error
+  def edge(raise = true)
+    if is_match(:ARROW) or @token.name == @constant["__"]
       get_next_token
-      true
     else
-      false
+      if raise
+        raise "expected an edge but found #{@token.name}"
+      else
+        false
+      end
     end
   end
 
