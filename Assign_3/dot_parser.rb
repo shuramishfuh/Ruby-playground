@@ -40,14 +40,17 @@ class DotParser
   end
 
   def graph
+    puts "Start recognizing a digraph"
     must_match(:DIGRAPH)
-    if match_id
+    match_id(false)
+    if is_match(:LCURLY)
       must_match(:LCURLY)
-      stmt_list
-      if @token.type == @constant["RCURLY"]
+      if is_match(:RCURLY)
         must_match(:RCURLY)
       else
         stmt_list
+        must_match(:RCURLY)
+        puts "Finish recognizing a cluster"
       end
     else
       raise "Syntax error at line"
