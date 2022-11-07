@@ -141,12 +141,17 @@ class DotParser
 
   end
 
-  def match_id
-    if @token.type == @constant["ID"] or @token.type == @constant["STRING"] or @token.type == @constant["INT"]
-      get_next_token
-      true
+  def match_id_or_subgraph(raise = true)
+    if is_id
+      match_id
+    elsif is_match(:SUBGRAPH)
+      subgraph
     else
-      false
+      if raise
+        raise "expected an id or subgraph but found #{@token.name}"
+      else
+        false
+      end
     end
   end
 
