@@ -46,12 +46,12 @@ class DotParser
       must_match(:LCURLY)
       if is_match(:RCURLY)
         must_match(:RCURLY)
+        graph
       else
-        stmt_list
+        cluster
         must_match(:RCURLY)
         puts "Finish recognizing a cluster"
       end
-
     else
       raise "Syntax error at line"
     end
@@ -83,11 +83,13 @@ class DotParser
 
   #: check for errors
   def attr_list
+    puts "Start recognizing a property"
     match_id
     if is_match(:EQUALS)
       must_match(:EQUALS)
       match_id
     end
+    puts "Finish recognizing a property"
     if is_match(:COMMA)
       must_match(:COMMA)
       attr_list
@@ -169,4 +171,3 @@ class DotParser
     false
   end
 end
-
