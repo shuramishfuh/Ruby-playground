@@ -55,15 +55,10 @@ class DotParser
   end
 
   def stmt
-    if if_match(:SUBGRAPH)
-      subgraph
-    elsif match_id
-      if if_match(:ARROW)
-        edge_stmt
-      else
-        must_match(:EQUALS)
-        must_match(:id)
-      end
+    if is_id
+      must_match(:ID)
+      must_match(:EQUALS)
+      match_id_or_subgraph
     else
       edge_stmt
     end
