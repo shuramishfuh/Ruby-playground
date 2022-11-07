@@ -21,9 +21,8 @@ class DotParser
   end
 
   # check if match token
-  def if_match(token_type)
+  def is_match(token_type)
     if @token.type == @constant[token_type.to_s.upcase]
-      get_next_token
       true
     else
       false
@@ -52,6 +51,7 @@ class DotParser
         must_match(:RCURLY)
         puts "Finish recognizing a cluster"
       end
+
     else
       raise "Syntax error at line"
     end
