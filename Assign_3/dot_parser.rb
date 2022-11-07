@@ -132,14 +132,35 @@ class DotParser
   def subgraph
     puts "Start recognizing a subgraph"
     must_match(:SUBGRAPH)
-    if match_id
-      must_match(:LCURLY)
-      stmt_list
+    if is_id
+      match_id
+    end
+    cluster
+    puts "Finish recognizing a subgraph"
+  end
+
+  def cluster
+    puts "Start recognizing a cluster"
+    must_match(:LCURLY)
+    if is_match(:RCURLY)
       must_match(:RCURLY)
     else
-      raise "Syntax error at line"
+      stmt_list
+      must_match(:RCURLY)
     end
+    puts "Finish recognizing a cluster"
+  end
 
+  def match_id(raise = true)
+    if @token.type == @constant["ID"] or @token.type == @constant["STRING"] or @token.type == @constant["INT"]
+      get_next_token
+    else
+      if raise
+        raise "Syntax error at line"
+      else
+        false
+      end
+    end
   end
 
   def match_id_or_subgraph(raise = true)
