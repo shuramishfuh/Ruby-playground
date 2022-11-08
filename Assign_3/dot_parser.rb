@@ -42,19 +42,8 @@ class DotParser
     puts "Start recognizing a digraph"
     must_match(:DIGRAPH)
     match_id(false)
-    if is_match(:LCURLY)
-      must_match(:LCURLY)
-      if is_match(:RCURLY)
-        must_match(:RCURLY)
-        graph
-      else
-        cluster
-        must_match(:RCURLY)
-        puts "Finish recognizing a cluster"
-      end
-    else
-      raise "Syntax error at line"
-    end
+    cluster
+    puts "Finish recognizing a digraph"
   end
 
   #TODO: check for errors
