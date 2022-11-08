@@ -155,7 +155,6 @@ class DotLexer
         end
       end
     end
-    @array_of_tokens.push(Token.new("EOF", EOF))
     return @array_of_tokens
   end
 end
