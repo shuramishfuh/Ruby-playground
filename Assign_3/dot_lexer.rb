@@ -124,32 +124,43 @@ class DotLexer
     end
   end
 
+  def get_equal_and_other(word)
+    if str.length > 1
+      str = str.split("=")
+      @temp = str[1] # add equals back to string
+      str[1] = "="
+      str.push(@temp)
+      str.each do |word|
+        core(word)
+      end
+    else
+      core(str)
+    end
+  end
+
+  def get_comma_and_other(word)
+    if str.length > 1
+      str = str.split(",")
+      str.push(",")
+      str.each do |word|
+        core(word)
+      end
+    else
+      core(str)
+    end
+  end
+
   def next_token
     # read file
     File.readlines("prog3_1.in").each do |line|
       line.split(' ').each do |str|
-        if str.include?("=") # check for equals
-          if str.length > 1
-            str = str.split("=")
-            @temp = str[1] # add equals back to string
-            str[1] = "="
-            str.push(@temp)
-            str.each do |word|
-              core(word)
-            end
-          else
-            core(str)
-          end
+        if str.include?("{") and str.length == 2
+          core(str[0])
+          core(str[1])
+        elsif str.include?("=") # check for equals
+          get_equal_and_other(str)
         elsif str.include?(",") # check for comma
-          if str.length > 1
-            str = str.split(",")
-            str.push(",")
-            str.each do |word|
-              core(word)
-            end
-          else
-            core(str)
-          end
+          get_comma_and_other(str)
         else
           core(str)
         end
