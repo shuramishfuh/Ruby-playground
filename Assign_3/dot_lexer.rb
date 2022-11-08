@@ -124,7 +124,7 @@ class DotLexer
     end
   end
 
-  def get_equal_and_other(word)
+  def get_equal_and_other(str)
     if str.length > 1
       str = str.split("=")
       @temp = str[1] # add equals back to string
@@ -150,15 +150,24 @@ class DotLexer
     end
   end
 
+  def reading_multiple_brackets(str)
+    if str.to_s.length > 1
+      (0..str.count(str)).each { |a|
+        core(str[a])
+      }
+    else
+      core(str)
+    end
+  end
+
   def next_token
     # read file
     File.readlines("prog3_1.in").each do |line|
       line.split(' ').each do |str|
         if str.include?("{")
-
-          for a in 0.. str.count("{") do
-            core(str[a])
-          end
+          reading_multiple_brackets("{")
+        elsif str.include?("}")
+          reading_multiple_brackets("}")
         elsif str.include?("=") # check for equals
           get_equal_and_other(str)
         elsif str.include?(",") # check for comma
