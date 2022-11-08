@@ -154,9 +154,11 @@ class DotLexer
     # read file
     File.readlines("prog3_1.in").each do |line|
       line.split(' ').each do |str|
-        if str.include?("{") and str.length == 2
-          core(str[0])
-          core(str[1])
+        if str.include?("{")
+
+          for a in 0.. str.count("{") do
+            core(str[a])
+          end
         elsif str.include?("=") # check for equals
           get_equal_and_other(str)
         elsif str.include?(",") # check for comma
