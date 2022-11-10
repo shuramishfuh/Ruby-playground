@@ -97,7 +97,7 @@ class DotParser
     puts "Finish recognizing a property"
   end
 
-  def edgeRHS
+  def edge_rhs
     match_id_or_subgraph
     if edge(false)
       match_id_or_subgraph
