@@ -67,7 +67,17 @@ class DotParser
     puts "Finish recognizing an edge statement"
   end
 
-  #: check for errors
+  def match_id_or_subgraph
+    if is_id
+      match_id
+    elsif nextTokenIs(:SUBGRAPH)
+      subgraph
+    else
+      puts "expecting Property, edge or subgraph, but found #{@token.text}"
+      exit
+    end
+  end
+
   def attr_list
     puts "Start recognizing a property"
     match_id
