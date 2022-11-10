@@ -1,17 +1,18 @@
-# author : Ramish
-# section 2
-# CS 3520 Fall 2022
-# this class build a toke based on the name and type
 class Token
-  attr_reader :name, :type
-  # initialize method
+  attr_accessor :type, :text
+  EOF = 15
 
-  def initialize(name, type)
-    @name = name
+  def initialize(text, type)
+    @text = text
     @type = type
   end
 
-  def to_s
-    return "[" + @name.to_s + ":" + @type.to_s + "]"
+  def self.EOF
+    return -1
   end
+
+  def to_s
+    return "[#{@text}:#{@type.to_s}]"
+  end
+
 end
