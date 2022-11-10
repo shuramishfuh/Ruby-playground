@@ -26,6 +26,11 @@ class DotParser
     match_id(false)
     cluster
     puts "Finish recognizing a digraph"
+    # if is_match(:EOF)
+    #   exit
+    # else
+    #   graph
+    # end
   end
 
   def stmt_list
@@ -111,9 +116,11 @@ class DotParser
     elsif @token.type == "__" # test for __ which is not a token
       @counter += 1
       get_next_token
+      true
     else
       if raise
-        raise "expected an edge but found #{@token.name}"
+        puts "expected an edge but found #{@token.text}"
+        exit
       else
         false
       end
@@ -126,52 +133,80 @@ class DotParser
     if is_id
       match_id
     end
-    cluster
+    c = cluster
+    # while !c and @token.type != Token::EOF and (not nextTokenIs(:RCURLY))
+    #   stmt_list
+    # end
     puts "Finish recognizing a subgraph"
+  end
+
+  def get_next_token(counter = @counter)
+    @token = @tokens[counter]
+  end
+
+  def must_match(token_type)
+    if @token.type == @constant[token_type.to_s.upcase]
+      @counter += 1
+      get_next_token
+      true
+    else
+      puts "expected a #{token_type} but found #{@token.text}"
+      exit
+    end
+  end
+
+  def match_id(raise = true)
+    if @token.type == @constant["ID"] or @token.type == @constant["STRING"] or @token.type == @constant["INT"]
+      @counter += 1
+      get_next_token
+      true
+    else
+      if raise
+        puts "expected an id but found #{@token.text}"
+        exit
+      else
+        false
+      end
+    end
+  end
+
+  def is_id(param = @token)
+    if param.type == @constant["ID"] or param.type == @constant["STRING"] or param.type == @constant["INT"]
+      true
+    else
+      false
+    end
+  end
+
+  def nextTokenIs(token_type)
+    if @token.type == @constant[token_type.to_s.upcase]
+      true
+    else
+      false
+    end
+  end
+
+  def assignment
+    if is_id and @tokens[@counter + 1].type == @constant["EQUALS"] and is_id(@tokens[@counter + 2])
+      puts "start recognizing a property"
+      puts "Finnish recognizing a property"
+      @counter += 3
+      get_next_token
+      true
+    else
+      false
+    end
   end
 
   def cluster
     puts "Start recognizing a cluster"
     must_match(:LCURLY)
-    if is_match(:RCURLY)
-      must_match(:RCURLY)
-    else
-      stmt_list
-      must_match(:RCURLY)
+    stmt_list
+    must_match(:RCURLY)
+    if nextTokenIs(:LCURLY)
+      cluster
     end
     puts "Finish recognizing a cluster"
   end
 
-  def match_id(raise = true)
-    if @token.type == @constant["ID"] or @token.type == @constant["STRING"] or @token.type == @constant["INT"]
-      get_next_token
-    else
-      if raise
-        raise "Syntax error at line"
-      else
-        false
-      end
-    end
-  end
-
-  def match_id_or_subgraph(raise = true)
-    if is_id
-      match_id
-    elsif is_match(:SUBGRAPH)
-      subgraph
-    else
-      if raise
-        raise "expected an id or subgraph but found #{@token.name}"
-      else
-        false
-      end
-    end
-  end
-
-  def is_id
-    if @token.type == @constant["ID"] or @token.type == @constant["STRING"] or @token.type == @constant["INT"]
-      true
-    end
-    false
-  end
 end
