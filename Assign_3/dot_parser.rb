@@ -1,8 +1,7 @@
 class DotParser
-
-  @constant
   @counter
-  @lexer
+  @tokens
+  @token
 
   def initialize(lexer)
     @counter = -1
