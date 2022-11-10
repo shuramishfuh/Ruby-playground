@@ -2,11 +2,8 @@
 # section 2
 # CS 3520 Fall 2022
 
-# this class defines the token and their creation
-require_relative "token.rb"
-
+require_relative "token"
 class DotLexer
-
   ID = 1
   INT = 2
   STRING = 3
@@ -21,162 +18,269 @@ class DotLexer
   SUBGRAPH = 12
   COMMA = 13
   WS = 14
-  EOF = -1
+  EOF = 15
 
-  @array_of_tokens = []
-
+  # Initialize method to take in the input.
   def initialize
-    @array_of_tokens = []
-  end
-
-  def pure_string(word)
-    if word.match(/[a-zA-Z0-9]+$/) && word.index(/[^[:alnum:]]/) == nil
-      @array_of_tokens.push(Token.new(word, ID))
-    else
-      odd_char_position = word.index(/[^[:alnum:]]/)
-      @array_of_tokens.push(Token.new(word[0..odd_char_position - 1], ID))
-      # puts "illegal char " + word[odd_char_position]
-      core(word[odd_char_position + 1..-1])
+    @input = gets.chomp()
+    while tmp = gets do
+      @input = @input + tmp.chomp();
     end
   end
 
-  def illegal_or_string(word)
-    if word[word.length - 1] == "\""
-      @array_of_tokens.push(Token.new(word, STRING))
-
-      # string with special chars
-    else
-      word = word[1..-1].chars
-      index_of_string = word.find_index("\"")
-      sub_string = "\"" + word[0..index_of_string].join('')
-      @array_of_tokens.push(Token.new(sub_string, STRING)) # check if string is valid
-      word = word.join[index_of_string + 1..-1]
-      core(word)
-    end
-  end
-
-  def rbracket(word)
-    if word.length > 1
-      core(word[1..-1])
-      @array_of_tokens.push(Token.new("]", RBRACK))
-    else
-      @array_of_tokens.push(Token.new("]", RBRACK))
-    end
-  end
-
-  def lbracket(word)
-    if word.length > 1
-      @array_of_tokens.push(Token.new("[", LBRACK))
-      core(word[1..-1])
-    else
-      @array_of_tokens.push(Token.new("[", LBRACK))
-    end
-  end
-
-  def equals(word)
-    if word.length > 1
-      @array_of_tokens.push(Token.new(word[0], EQUALS)) # push the first char check here for error
-      core(word[1..-1])
-    else
-      @array_of_tokens.push(Token.new(word, EQUALS))
-    end
-  end
-
-  def semi(word)
-    core(word.chop)
-    @array_of_tokens.push(Token.new(";", SEMI))
-  end
-
-  def comma(word)
-    core(word.chop)
-    @array_of_tokens.push(Token.new(",", COMMA))
-  end
-
-  def core(word)
-
-    if word == "="
-      equals(word)
-    elsif word.downcase == "digraph"
-      @array_of_tokens.push(Token.new(word, DIGRAPH))
-    elsif word.strip.empty?
-    elsif word.downcase == "subgraph"
-      @array_of_tokens.push(Token.new(word, SUBGRAPH))
-    elsif word.downcase == "{"
-      @array_of_tokens.push(Token.new(word, LCURLY))
-    elsif word.downcase == "}"
-      @array_of_tokens.push(Token.new(word, RCURLY))
-    elsif word[0] == "["
-      lbracket(word)
-    elsif word[0] == "]"
-      rbracket(word)
-    elsif word[0] == ","
-      comma(word)
-    elsif word[word.length - 1] == ";"
-      semi(word)
-    elsif word[0] == "\""
-      illegal_or_string(word)
-    elsif word.downcase == "->"
-      @array_of_tokens.push(Token.new(word, ARROW))
-    elsif word == word.to_i.to_s
-      @array_of_tokens.push(Token.new(word, INT))
-    elsif word[0].match(/^[a-zA-Z]+$/)
-      pure_string(word)
-    end
-  end
-
-  def get_equal_and_other(str)
-    if str.length > 1
-      str = str.split("=")
-      @temp = str[1] # add equals back to string
-      str[1] = "="
-      str.push(@temp)
-      str.each do |word|
-        core(word)
-      end
-    else
-      core(str)
-    end
-  end
-
-  def get_comma_and_other(word)
-    if str.length > 1
-      str = str.split(",")
-      str.push(",")
-      str.each do |word|
-        core(word)
-      end
-    else
-      core(str)
-    end
-  end
-
-  def reading_multiple_brackets(str)
-    if str.to_s.length > 1
-      (0..str.count(str)).each { |a|
-        core(str[a])
-      }
-    else
-      core(str)
-    end
-  end
-
+  # Compares the next lexeme to all token classes
+  # to find a match. Similar implementation to the
+  # getChar() method defined in the textbook.
   def next_token
-    # read file
-    File.readlines("prog3_1.in").each do |line|
-      line.split(' ').each do |str|
-        if str.include?("{")
-          reading_multiple_brackets("{")
-        elsif str.include?("}")
-          reading_multiple_brackets("}")
-        elsif str.include?("=") # check for equals
-          get_equal_and_other(str)
-        elsif str.include?(",") # check for comma
-          get_comma_and_other(str)
-        else
-          core(str)
-        end
-      end
+    if isEOF
+      getEOF
+      return Token.new("EOF", EOF)
+    elsif @input.length == 0
+      return Token.new("EOF", EOF)
+    elsif isDIGRAPH
+      tk = Token.new(getDIGRAPH, DIGRAPH)
+    elsif isSUBGRAPH
+      tk = Token.new(getSUBGRAPH, SUBGRAPH)
+    elsif isINT
+      tk = Token.new(getINT, INT)
+    elsif isSTRING
+      tk = Token.new(getSTRING, STRING)
+    elsif isLCURLY
+      tk = Token.new(getLCURLY, LCURLY)
+    elsif isRCURLY
+      tk = Token.new(getRCURLY, RCURLY)
+    elsif isSEMI
+      tk = Token.new(getSEMI, SEMI)
+    elsif isLBRACK
+      tk = Token.new(getLBRACK, LBRACK)
+    elsif isRBRACK
+      tk = Token.new(getRBRACK, RBRACK)
+    elsif isARROW
+      tk = Token.new(getARROW, ARROW)
+    elsif isEQUALS
+      tk = Token.new(getEQUALS, EQUALS)
+    elsif isCOMMA
+      tk = Token.new(getCOMMA, COMMA)
+    elsif isID
+      tk = Token.new(getID, ID)
+    elsif isWS
+      getWS
+      tk = next_token
+    elsif isINVALID
+      puts "illegal char: #{getINVALID}"
+      tk = next_token
+    else
+      return Token.new("EOF", -1)
     end
-    return @array_of_tokens
+
+    return tk
+  end
+
+  #Checks to see if the lexeme is an ID
+  def isID()
+    return /^[a-zA-z][0-9a-zA-Z_]*/.match(@input)
+  end
+
+  # Retreives the ID lexeme and removes the
+  # lexeme from the input string.
+  def getID()
+    matched = @input.match(/^([a-zA-z][0-9a-zA-Z_]*)/)
+    @input = @input.sub(/#{matched}/, "")
+    return matched
+  end
+
+  #Checks to see if the lexeme is an INT
+  def isINT()
+    return @input.match(/^[0-9]+/)
+  end
+
+  # Retrieves the INT lexeme and removes the
+  # lexeme from the input string.
+  def getINT()
+    matched = @input.match(/^([0-9]+)/)
+    @input = @input.sub(/#{matched}/, '')
+    return matched
+  end
+
+  #Checks to see if the lexeme is a STRING
+  def isSTRING()
+    return @input.match(/^"[\w]*"/)
+  end
+
+  # Retrieves the STRING lexeme and removes the
+  # lexeme from the input string.
+  def getSTRING()
+    matched = @input.match(/^("[\w]*")/)
+    @input = @input.sub(/#{matched}/, '')
+    return matched
+  end
+
+  #Checks to see if the lexeme is a LCURLY
+  def isLCURLY()
+    return @input.match(/^\{/)
+  end
+
+  # Retrieves the LCURLY lexeme and removes the
+  # lexeme from the input string.
+  def getLCURLY()
+    matched = @input.match(/^(\{)/)
+    @input = @input.sub(/#{matched}/, '')
+    return matched
+  end
+
+  #Checks to see if the lexeme is a RCURLY
+  def isRCURLY()
+    return @input.match(/^\}/)
+  end
+
+  # Retrieves the RCURLY lexeme and removes the
+  # lexeme from the input string.
+  def getRCURLY()
+    matched = @input.match(/^(\})/)
+    @input = @input.sub(/#{matched}/, '')
+    return matched
+  end
+
+  #Checks to see if the lexeme is a SEMI
+  def isSEMI()
+    return @input.match(/^\;/)
+  end
+
+  # Retrieves the SEMI lexeme and removes the
+  # lexeme from the input string.
+  def getSEMI()
+    matched = @input.match(/^(\;)/)
+    @input = @input.sub(/#{matched}/, '')
+    return matched
+  end
+
+  #Checks to see if the lexeme is a LBRACK
+  def isLBRACK()
+    return @input.match(/^\[/)
+  end
+
+  # Retrieves the LBRACK lexeme and removes the
+  # lexeme from the input string.
+  def getLBRACK()
+    matched = @input.match(/^(\[)/)
+    @input = @input.sub(/\[/, '')
+    return matched
+  end
+
+  #Checks to see if the lexeme is an RBRACK
+  def isRBRACK()
+    return @input.match(/^\]/)
+  end
+
+  # Retrieves the RBRACK lexeme and removes the
+  # lexeme from the input string.
+  def getRBRACK()
+    matched = @input.match(/^(\])/)
+    @input = @input.sub(/#{matched}/, '')
+    return matched
+  end
+
+  #Checks to see if the lexeme is an ARROW
+  def isARROW()
+    return @input.match(/^->/)
+  end
+
+  # Retrieves the ARROW lexeme and removes the
+  # lexeme from the input string.
+  def getARROW()
+    matched = @input.match(/^(->)/)
+    @input = @input.sub(/#{matched}/, '')
+    return matched
+  end
+
+  #Checks to see if the lexeme is an EQUALS
+  def isEQUALS()
+    return @input.match(/^=/)
+  end
+
+  # Retrieves the EQUALS lexeme and removes the
+  # lexeme from the input string.
+  def getEQUALS()
+    matched = @input.match(/^(=)/)
+    @input = @input.sub(/#{matched}/, '')
+    return matched
+  end
+
+  #Checks to see if the lexeme is a DIGRAPH
+  def isDIGRAPH()
+    return @input.match(/^digraph /i)
+  end
+
+  # Retrieves the DIGRAPH lexeme and removes the
+  # lexeme from the input string.
+  def getDIGRAPH()
+    matched = @input.match(/^(digraph)/i)
+    @input = @input.sub(/#{matched}/, '')
+    return matched
+  end
+
+  #Checks to see if the lexeme is a SUBGRAPH
+  def isSUBGRAPH()
+    return @input.match(/^subgraph /i)
+  end
+
+  # Retrieves the SUBGRAPH lexeme and removes the
+  # lexeme from the input string.
+  def getSUBGRAPH()
+    matched = @input.match(/^(subgraph)/i)
+    @input = @input.sub(/#{matched}/, '')
+    return matched
+  end
+
+  #Checks to see if the lexeme is a COMMA
+  def isCOMMA()
+    return @input.match(/^,/)
+  end
+
+  # Retrieves the COMMA lexeme and removes the
+  # lexeme from the input string.
+  def getCOMMA()
+    matched = @input.match(/^(,)/)
+    @input = @input.sub(/#{matched}/, '')
+    return matched
+  end
+
+  #Checks to see if the lexeme is WS
+  def isWS()
+    return @input.match(/^\p{Space}/)
+  end
+
+  # Retrieves the WS lexeme and removes the
+  # lexeme from the input string.
+  def getWS()
+    matched = @input.match(/^(\p{Space})/)
+    @input = @input.sub(/#{matched}/, '')
+    return matched
+  end
+
+  #Checks to see if the lexeme is INVALID
+  def isINVALID()
+    return @input.match(/^[^a-zA-Z0-9_"]/)
+  end
+
+  # Retrieves the INVALID lexeme and removes the
+  # lexeme from the input string.
+  def getINVALID()
+    matched = @input.match(/^([^a-zA-Z0-9_"])/)
+    @input = @input.sub(/#{matched}/, '')
+    return matched
+  end
+
+  #Checks to see if the lexeme is INVALID
+  def isEOF()
+    return @input.match(/^\Z/)
+  end
+
+  # Retrieves the INVALID lexeme and removes the
+  # lexeme from the input string.
+  def getEOF()
+    matched = @input.match(/^\Z/)
+    @input = @input.sub(/#{matched}/, '')
+    return matched
   end
 end
