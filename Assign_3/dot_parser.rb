@@ -104,9 +104,12 @@ class DotParser
     end
   end
 
-  # @param [Boolean] pass false if not want to throw error
   def edge(raise = true)
-    if is_match(:ARROW) or @token.name == @constant["__"]
+    if nextTokenIs(:ARROW)
+      must_match(:ARROW)
+      true
+    elsif @token.type == "__" # test for __ which is not a token
+      @counter += 1
       get_next_token
     else
       if raise
