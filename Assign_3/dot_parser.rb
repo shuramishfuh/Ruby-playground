@@ -4,37 +4,20 @@ class DotParser
   @token
 
   def initialize(lexer)
-    @counter = -1
+    @counter = 0
+    @tokens = []
     @constant = {
       "ID" => 1, "INT" => 2, "STRING" => 3, "LCURLY" => 4, "RCURLY" => 5,
       "SEMI" => 6, "LBRACK" => 7, "RBRACK" => 8, "ARROW" => 9, "EQUALS" => 10,
-      "DIGRAPH" => 11, "SUBGRAPH" => 12, "COMMA" => 13, "WS" => 14, "EOF" => -1
+      "DIGRAPH" => 11, "SUBGRAPH" => 12, "COMMA" => 13, "WS" => 14, "EOF" => 15
     }
-    @lexer = lexer.next_token
-    @token = get_next_token
-  end
+    # read in all tokens
+    begin
+      t = lexer.next_token
+      @tokens << t
+    end while Token::EOF != t.type
 
-  def get_next_token
-    @counter += 1
-    @token = @lexer[@counter]
-  end
-
-  # check if match token
-  def is_match(token_type)
-    if @token.type == @constant[token_type.to_s.upcase]
-      true
-    else
-      false
-    end
-  end
-
-  # must match the token type or raise an error
-  def must_match(token_type)
-    if @token.type == @constant[token_type.to_s.upcase]
-      get_next_token
-    else
-      raise "Syntax error at line"
-    end
+    get_next_token
   end
 
   def graph
