@@ -81,15 +81,20 @@ class DotParser
   def attr_list
     puts "Start recognizing a property"
     match_id
-    if is_match(:EQUALS)
-      must_match(:EQUALS)
-      match_id
+    if nextTokenIs(:RBRACK)
+      puts "Finish recognizing a property"
+      true
+    else
+      if nextTokenIs(:EQUALS)
+        must_match(:EQUALS)
+        match_id
+      end
+      if nextTokenIs(:COMMA)
+        must_match(:COMMA)
+        attr_list
+      end
     end
     puts "Finish recognizing a property"
-    if is_match(:COMMA)
-      must_match(:COMMA)
-      attr_list
-    end
   end
 
   def edgeRHS
