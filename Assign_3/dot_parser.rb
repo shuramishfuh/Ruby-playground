@@ -58,13 +58,12 @@ class DotParser
     puts "Start recognizing an edge statement"
     match_id_or_subgraph
     edge
-    edgeRHS
-    if is_match(:LBRAK)
-      must_match(:LBRAK)
+    edge_rhs
+    if nextTokenIs(:LBRACK)
+      must_match(:LBRACK)
       attr_list
-      must_match(:RBRAK)
+      must_match(:RBRACK)
     end
-
     puts "Finish recognizing an edge statement"
   end
 
